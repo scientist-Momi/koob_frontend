@@ -2,7 +2,9 @@
 import { onMounted, ref, computed, onBeforeUnmount } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { useBookStore } from '@/stores/book'
+import { useModalStore } from '@/stores/modal'
 
+const modal = useModalStore()
 const bookStore = useBookStore()
 const toast = useToastStore()
 
@@ -135,7 +137,7 @@ const filteredBooks = computed(() =>
                 class="absolute right-0 mt-2 w-[200px] bg-white rounded custom-shadow z-10 overflow-hidden dropdown-menu"
               >
                 <ul class="text-[12px] font-normal">
-                  <li class="border-b border-gray-100 text-[#009799]">
+                  <li class="">
                     <RouterLink
                       :to="{ name: 'Dashboard' }"
                       class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
@@ -144,7 +146,7 @@ const filteredBooks = computed(() =>
                       <span>Open Book</span>
                     </RouterLink>
                   </li>
-                  <li class="border-b border-gray-100 text-[#009799]">
+                  <li class="border-b border-gray-100 ">
                     <RouterLink
                       :to="{ name: 'Dashboard' }"
                       class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
@@ -152,13 +154,13 @@ const filteredBooks = computed(() =>
                       <span>Open Book</span>
                     </RouterLink>
                   </li>
-                  <li class="border-b border-gray-100 text-[#009799]">
-                    <RouterLink
-                      :to="{ name: 'Dashboard' }"
+                  <li class="border-b border-gray-100 text-red-700">
+                    <div
+                    @click="modal.open('confirm_delete', book)"
                       class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
                     >
                       <span>Remove book</span>
-                    </RouterLink>
+                  </div>
                   </li>
                 </ul>
               </div>
