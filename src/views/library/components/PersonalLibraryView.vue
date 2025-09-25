@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, onBeforeUnmount } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { useBookStore } from '@/stores/book'
 
@@ -7,6 +7,36 @@ const bookStore = useBookStore()
 const toast = useToastStore()
 
 const search = ref('')
+const openDropdownId = ref(null)
+
+// const handleClickOutside = (event) => {
+//   if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+//     openDropdownId.value = null
+//   }
+// }
+
+function handleClickOutside(event) {
+  // Check if the click is inside any dropdown
+  const dropdowns = document.querySelectorAll('.dropdown-menu')
+  let clickedInside = false
+  dropdowns.forEach((dropdown) => {
+    if (dropdown.contains(event.target)) {
+      clickedInside = true
+    }
+  })
+  if (!clickedInside) {
+    openDropdownId.value = null
+  }
+}
+const dropdownRef = ref(null)
+
+onMounted(() => {
+  document.addEventListener('mousedown', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleClickOutside)
+})
 
 function show() {
   toast.showToast({
@@ -21,12 +51,12 @@ onMounted(() => {
 })
 
 const filteredBooks = computed(() =>
-  bookStore.userLibrary.filter(item => {
+  bookStore.userLibrary.filter((item) => {
     const title = item.book.title?.toLowerCase() || ''
     const authors = (item.book.authors || []).join(' ').toLowerCase()
     const query = search.value.toLowerCase()
     return title.includes(query) || authors.includes(query)
-  })
+  }),
 )
 </script>
 
@@ -53,10 +83,13 @@ const filteredBooks = computed(() =>
         <div
           v-for="book in filteredBooks"
           :key="book.id"
-          class="w-full py-2.5 flex flex-col border-b-[0.5px] border-gray-300 mb-3.5 hover:bg-gray-50"
+          class="w-full py-2.5 flex flex-col border-b-[0.5px] border-gray-300 mb-3.5"
         >
           <div class="flex items-center cursor-pointer text-gray-800">
-            <router-link :to="{ name: 'BookView', params: { id: book.book.id } }" class="max-w-[1200px] w-full items-center p-0">
+            <router-link
+              :to="{ name: 'BookView', params: { id: book.book.id } }"
+              class="max-w-[1200px] w-full items-center p-0 hover:bg-gray-50"
+            >
               <div class="flex max-w-[1200px] items-center w-full justify-between">
                 <div class="flex items-center">
                   <div class="w-8 mr-2 flex justify-center items-center">
@@ -90,8 +123,45 @@ const filteredBooks = computed(() =>
                 </ol>
               </div>
             </router-link>
-            <div @click="show()" class="flex items-center justify-end ml-3 cursor-pointer">
-              <span class="material-symbols-outlined a1"> more_vert </span>
+            <div class="relative" ref="dropdownRef2">
+              <div
+                @click="openDropdownId = openDropdownId === book.id ? null : book.id"
+                class="flex items-center justify-end ml-3 cursor-pointer"
+              >
+                <span class="material-symbols-outlined a1"> more_vert </span>
+              </div>
+              <div
+                v-if="openDropdownId === book.id"
+                class="absolute right-0 mt-2 w-[200px] bg-white rounded custom-shadow z-10 overflow-hidden dropdown-menu"
+              >
+                <ul class="text-[12px] font-normal">
+                  <li class="border-b border-gray-100 text-[#009799]">
+                    <RouterLink
+                      :to="{ name: 'Dashboard' }"
+                      class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
+                    >
+                      <!-- <span class="material-symbols-outlined"> view_apps </span> -->
+                      <span>Open Book</span>
+                    </RouterLink>
+                  </li>
+                  <li class="border-b border-gray-100 text-[#009799]">
+                    <RouterLink
+                      :to="{ name: 'Dashboard' }"
+                      class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
+                    >
+                      <span>Open Book</span>
+                    </RouterLink>
+                  </li>
+                  <li class="border-b border-gray-100 text-[#009799]">
+                    <RouterLink
+                      :to="{ name: 'Dashboard' }"
+                      class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
+                    >
+                      <span>Remove book</span>
+                    </RouterLink>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -103,5 +173,12 @@ const filteredBooks = computed(() =>
 <style scoped>
 .a1 {
   font-size: 17px;
+}
+
+.custom-shadow {
+  box-shadow:
+    0 1px 10px rgba(0, 151, 153, 0.3),
+    0 0.5px 1px rgba(0, 151, 153, 0.15),
+    0 0 0 0.5px rgba(0, 151, 153, 0.1);
 }
 </style>

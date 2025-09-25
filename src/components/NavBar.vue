@@ -146,7 +146,7 @@ const handleAgent = () => {
                   >
                     <template v-if="userStore.user?.pictureUrl">
                       <img
-                        :src="userStore.user.pictureUrl"
+                        :src="userStore.user?.pictureUrl"
                         :alt="userStore.user?.name"
                         class="w-full h-full object-cover"
                       />

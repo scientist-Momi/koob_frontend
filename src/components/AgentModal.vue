@@ -6,7 +6,10 @@ import { useBookStore } from '@/stores/book'
 const bookStore = useBookStore()
 const toast = useToastStore()
 const messages = ref([
-  { sender: 'agent', text: 'Hi! I am your AI agent. How can I help you today? I can help you with searching for books, and adding books to your library.' },
+  {
+    sender: 'agent',
+    text: 'Hi! I am your AI agent. How can I help you today? I can help you with searching for books, and adding books to your library.',
+  },
 ])
 const input = ref('')
 const loading = ref(false)
@@ -24,15 +27,20 @@ async function sendMessage() {
       },
       withCredentials: true,
     })
-    messages.value.push({ sender: 'agent', text: res.data })
-      input.value = ''
-  } catch (err) {
-    messages.value.push({
-      sender: 'agent',
-      text: 'Error communicating with the agent: ' + (err.response?.data || err.message),
-    })
-  } finally {
+    messages.value.push({ sender: 'agent', text: res.data.data })
+    input.value = ''
     await bookStore.fetchUserLibrary()
+  } catch (err) {
+    let errorMsg = 'Error communicating with the agent.'
+    if (err.response?.data?.status === 'error' && err.response?.data?.message) {
+      errorMsg = err.response.data.message
+    } else if (err.response?.data) {
+      errorMsg = err.response.data
+    } else if (err.message) {
+      errorMsg = err.message
+    }
+    messages.value.push({ sender: 'agent', text: errorMsg })
+  } finally {
     loading.value = false
   }
 }
