@@ -125,46 +125,12 @@ const filteredBooks = computed(() =>
                 </ol>
               </div>
             </router-link>
-            <div class="relative" ref="dropdownRef2">
               <div
-                @click="openDropdownId = openDropdownId === book.id ? null : book.id"
+                @click="modal.open('confirm_delete', book)"
                 class="flex items-center justify-end ml-3 cursor-pointer"
               >
-                <span class="material-symbols-outlined a1"> more_vert </span>
+                <span class="material-symbols-outlined a1 text-red-600 hover:text-red-400"> delete </span>
               </div>
-              <div
-                v-if="openDropdownId === book.id"
-                class="absolute right-0 mt-2 w-[200px] bg-white rounded custom-shadow z-10 overflow-hidden dropdown-menu"
-              >
-                <ul class="text-[12px] font-normal">
-                  <li class="">
-                    <RouterLink
-                      :to="{ name: 'Dashboard' }"
-                      class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
-                    >
-                      <!-- <span class="material-symbols-outlined"> view_apps </span> -->
-                      <span>Open Book</span>
-                    </RouterLink>
-                  </li>
-                  <li class="border-b border-gray-100 ">
-                    <RouterLink
-                      :to="{ name: 'Dashboard' }"
-                      class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
-                    >
-                      <span>Open Book</span>
-                    </RouterLink>
-                  </li>
-                  <li class="border-b border-gray-100 text-red-700">
-                    <div
-                    @click="modal.open('confirm_delete', book)"
-                      class="cursor-pointer p-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
-                    >
-                      <span>Remove book</span>
-                  </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </div>

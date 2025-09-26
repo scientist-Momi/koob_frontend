@@ -11,31 +11,21 @@ const barClass = (type) => {
 </script>
 
 <template>
-  <!-- <div class=" w-full z-50 flex flex-col items-center pointer-events-none">
+  <div class="z-49">
     <transition-group name="slide-down" tag="div">
       <div
         v-for="toast in toastStore.toasts"
         :key="toast.id"
-        :class="`${barClass(toast.type)} px-5 flex flex-col mt-2 w-[95vw] max-w-[600px] shadow-lg rounded-lg pointer-events-auto`"
+        :class="`${barClass(toast.type)} flex justify-center`"
       >
-        <div class="flex justify-center py-3">
-          <div class="max-w-[1200px] flex items-center justify-between flex-wrap font-light w-full">
-            <div class="text-[15px]">{{ toast.message }}</div>
-          </div>
-        </div>
-      </div>
-    </transition-group>
-  </div> -->
-
-  <div class="z-49">
-    <transition-group name="slide-down" tag="div">
-      <div
-      v-for="toast in toastStore.toasts"
-        :key="toast.id"
-       :class="`${barClass(toast.type)} flex justify-center`">
         <div class="max-w-[1200px] flex items-center justify-between flex-wrap font-light w-full">
           <div class="w-full py-2.5 flex">
-            <span class="text-[15px] ">
+            <span class="material-symbols-outlined mr-2">
+              {{
+                toast.type === 'success' ? 'task_alt' : toast.type === 'error' ? 'error' : 'info'
+              }}
+            </span>
+            <span class="text-[15px]">
               {{ toast.message }}
             </span>
           </div>

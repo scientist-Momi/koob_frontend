@@ -80,11 +80,13 @@ const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.i
               </div>
             </div>
             <div class="flex items-center gap-2.5">
-              <button
+              <a
+              :href="bookItem.book.infoLink"
+              target="_blank"
                 class="bg-white text-[13px] font-normal border rounded-sm py-1 px-3.5 text-[#009799] flex items-center justify-center gap-1 cursor-pointer hover:bg-gray-200"
               >
                 Open book
-              </button>
+            </a>
               <button
                 @click="open = !open"
                 class="bg-white text-[13px] font-normal border rounded-sm p-1 pl-3.5 text-[#009799] flex items-center justify-center gap-1 cursor-pointer hover:bg-gray-200"
