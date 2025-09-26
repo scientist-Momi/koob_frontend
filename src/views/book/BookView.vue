@@ -1,22 +1,63 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
+import axios from 'axios'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useBookStore } from '@/stores/book'
 import { useModalStore } from '@/stores/modal'
+import { useUserStore } from '@/stores/user'
+import { useToastStore } from '@/stores/toast'
+import Dashboard from '../Dashboard.vue'
 
 const route = useRoute()
+const router = useRouter()
 const bookStore = useBookStore()
 const loading = ref(false)
 const modal = useModalStore()
+const userStore = useUserStore()
+const similarBooks = ref([])
+const toast = useToastStore()
+
+const bookId = Number(route.params.id)
+const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.id === bookId))
 
 onMounted(async () => {
   loading.value = true
+  try {
+    const userId = userStore.user?.id
+    const res = await axios.get(
+      `http://localhost:8080/api/v1/books/user/${userId}/book/${bookId}/recommendations`,
+      { withCredentials: true },
+    )
+    similarBooks.value = res.data.data
+  } catch (err) {
+    similarBooks.value = []
+  }
   if (!bookStore.userLibrary.length) {
     await bookStore.fetchUserLibrary()
   }
   await new Promise((resolve) => setTimeout(resolve, 1000))
   loading.value = false
 })
+
+async function addToLibrary(book) {
+  try {
+    await axios.post('http://localhost:8080/api/v1/books/save', book, { withCredentials: true })
+    similarBooks.value = similarBooks.value.filter((b) => b.id !== book.id)
+    await bookStore.fetchUserLibrary() // Refresh the store
+    toast.showToast({
+      message: 'Book has been added',
+      type: 'success',
+      duration: 5000,
+    })
+  } catch (err) {
+    toast.showToast({
+      message: 'Book could not be added, please try again',
+      type: 'error',
+      duration: 5000,
+    })
+  }
+}
 
 watch(
   () => loading.value,
@@ -37,7 +78,20 @@ function truncate(text, maxLength) {
 
 function formatDateTime(dateString) {
   const date = new Date(dateString)
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   const month = months[date.getMonth()]
   const day = date.getDate()
   let hours = date.getHours()
@@ -47,9 +101,11 @@ function formatDateTime(dateString) {
   return `${month} ${day} at ${hours}:${minutes} ${ampm}`
 }
 
-// Assume route param is :id and matches book.book.id
-const bookId = Number(route.params.id)
-const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.id === bookId))
+const confirmDelete = () => {
+ modal.open('confirm_delete', bookItem)
+
+ router.push({name: 'Dashboard'})
+}
 </script>
 
 <template>
@@ -81,19 +137,27 @@ const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.i
             </div>
             <div class="flex items-center gap-2.5">
               <a
-              :href="bookItem.book.infoLink"
-              target="_blank"
+                :href="bookItem.book.infoLink"
+                target="_blank"
                 class="bg-white text-[13px] font-normal border rounded-sm py-1 px-3.5 text-[#009799] flex items-center justify-center gap-1 cursor-pointer hover:bg-gray-200"
               >
                 Open book
-            </a>
+              </a>
               <button
+                @click="confirmDelete"  
+                class="bg-white text-[13px] font-normal border rounded-sm py-1 px-3.5 text-red-700 flex items-center justify-center gap-1 cursor-pointer hover:bg-gray-200"
+              >
+                Remove book
+              </button>
+
+
+              <!-- <button
                 @click="open = !open"
                 class="bg-white text-[13px] font-normal border rounded-sm p-1 pl-3.5 text-[#009799] flex items-center justify-center gap-1 cursor-pointer hover:bg-gray-200"
               >
                 <span>More</span>
                 <span class="material-symbols-outlined a1 mr-1"> expand_all </span>
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
@@ -211,7 +275,7 @@ const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.i
                   </span>
                 </div>
               </div>
-              <div class="min-h-[30px]">
+              <!-- <div class="min-h-[30px]">
                 <div class="flex items-center py-2.5">
                   <span class="text-[14px] text-gray-800 font-medium">Language</span>
                 </div>
@@ -224,7 +288,7 @@ const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.i
                     }}
                   </span>
                 </div>
-              </div>
+              </div> -->
               <div class="">
                 <div class="flex items-center py-2.5">
                   <span class="text-[14px] text-gray-800 font-medium">Activities</span>
@@ -235,13 +299,79 @@ const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.i
                   </div>
                   <div class="flex flex-col">
                     <div class="text-[13px]">
-                        <span class="font-semibold">you: </span>
-                        <span class="font-light text-green-600">New Book added to library.</span>
+                      <span class="font-semibold">you: </span>
+                      <span class="font-light text-green-600">New Book added to library.</span>
                     </div>
                     <div class="text-[13px] text-gray-400">
-                        <time :datetime="bookItem.addedAt">{{ formatDateTime(bookItem.addedAt) }}</time>
+                      <time :datetime="bookItem.addedAt">{{
+                        formatDateTime(bookItem.addedAt)
+                      }}</time>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- similar books -->
+              <div class="">
+                <div class="flex items-center py-2.5">
+                  <span class="text-[14px] text-gray-800 font-medium">Similar books</span>
+                </div>
+                <div class="flex-col">
+                  <template v-if="similarBooks.length">
+                    <div
+                      v-for="recBook in similarBooks"
+                      :key="recBook.id"
+                      class="flex items-start justify-between mb-12"
+                    >
+                      <div class="flex items-start">
+                        <div
+                          class="w-15 h-15 mr-3 flex items-center justify-center bg-gray-100 rounded"
+                        >
+                          <template
+                            v-if="
+                              recBook.volumeInfo.imageLinks &&
+                              recBook.volumeInfo.imageLinks.thumbnail
+                            "
+                          >
+                            <img
+                              :src="recBook.volumeInfo.imageLinks.thumbnail"
+                              alt="Similar book cover"
+                              class="h-16 w-12 object-contain rounded"
+                            />
+                          </template>
+                          <template v-else>
+                            <span class="text-gray-400 text-xs">No image</span>
+                          </template>
+                        </div>
+                        <div class="flex flex-col">
+                          <div class="text-[15px] text-gray-800">
+                            {{ recBook.volumeInfo.title }}
+                          </div>
+                          <div class="text-[13px] text-gray-600 font-light">
+                            by-
+                            {{
+                              recBook.volumeInfo.authors && recBook.volumeInfo.authors.length
+                                ? recBook.volumeInfo.authors.join(', ')
+                                : 'Unknown'
+                            }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        @click="addToLibrary(recBook)"
+                        class="text-white px-3 py-1 text-xs cursor-pointer hover:bg-gray-100 flex items-center"
+                        title="Add this book to your library"
+                      >
+                        <span class="material-symbols-outlined text-[#009799]"> add_circle </span>
+                      </button>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="text-center text-gray-400 py-8 text-[15px]">
+                      No recommendations found.
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
