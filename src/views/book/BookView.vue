@@ -17,6 +17,7 @@ const modal = useModalStore()
 const userStore = useUserStore()
 const similarBooks = ref([])
 const toast = useToastStore()
+const showFullDescription = ref(false)
 
 const bookId = Number(route.params.id)
 const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.id === bookId))
@@ -102,9 +103,9 @@ function formatDateTime(dateString) {
 }
 
 const confirmDelete = () => {
- modal.open('confirm_delete', bookItem)
+  modal.open('confirm_delete', bookItem)
 
- router.push({name: 'Dashboard'})
+  router.push({ name: 'Dashboard' })
 }
 </script>
 
@@ -144,12 +145,11 @@ const confirmDelete = () => {
                 Open book
               </a>
               <button
-                @click="confirmDelete"  
+                @click="confirmDelete"
                 class="bg-white text-[13px] font-normal border rounded-sm py-1 px-3.5 text-red-700 flex items-center justify-center gap-1 cursor-pointer hover:bg-gray-200"
               >
                 Remove book
               </button>
-
 
               <!-- <button
                 @click="open = !open"
@@ -187,15 +187,42 @@ const confirmDelete = () => {
                 </div>
               </div>
               <div class="min-h-[30px]">
-                <div class="flex items-center py-2.5">
+                <div class="flex items-center justify-between py-2.5">
                   <span class="text-[14px] text-gray-800 font-medium">Book summary</span>
+                  <div
+                    class="cursor-pointer hover:bg-gray-100 p-0.5"
+                    @click="showFullDescription = true"
+                  >
+                    <span class="material-symbols-outlined a2"> expand_content </span>
+                  </div>
                 </div>
                 <div
-                  class="w-full rounded-[6px] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_0_rgba(78,83,90,0.1)] bg-white flex items-center justify-center mb-5 px-[15px] py-[20px]"
+                  class="w-full rounded-[6px] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05),inset_0_1px_2px_0_rgba(78,83,90,0.1)] bg-white flex items-center justify-center mb-5 px-[15px] py-[20px] relative"
                 >
                   <span class="text-[13px] text-gray-700 font-light">
                     {{ truncate(bookItem.book.description, 460) }}
                   </span>
+                  <transition name="fade">
+                    <div
+                      v-if="showFullDescription"
+                      class="absolute left-1/2 z-40 w-full -translate-x-1/2  bg-white rounded-lg shadow-lg border border-gray-200 p-4"
+                    >
+                      <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-[14px] font-medium text-gray-800">Full Summary</h2>
+                        <button
+                          @click="showFullDescription = false"
+                          class="text-gray-500 hover:text-gray-700 cursor-pointer"
+                        >
+                          <span class="material-symbols-outlined a1"> close </span>
+                        </button>
+                      </div>
+                      <div
+                        class="text-[13px] text-gray-700 whitespace-pre-line max-h-[300px] overflow-y-auto"
+                      >
+                        {{ bookItem.book.description || 'No description available.' }}
+                      </div>
+                    </div>
+                  </transition>
                 </div>
               </div>
               <div class="min-h-[30px]">

@@ -60,7 +60,8 @@ const handleAgent = () => {
       </RouterLink>
       <BookSearchComponent />
       <div class="flex gap-3 items-center">
-        <div @click="handleAgent" class="cursor-pointer my-[10px]">
+        <div @click="handleAgent" class="cursor-pointer my-[10px] flex items-center">
+          <p class="text-[13px] mr-1.5">Try Ai agent!</p>
           <AiIcon class="w-[30px] h-[30px]" />
         </div>
 
