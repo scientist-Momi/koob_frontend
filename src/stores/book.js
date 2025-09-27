@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
 
 export const useBookStore = defineStore('book', {
   state: () => ({
@@ -9,7 +10,7 @@ export const useBookStore = defineStore('book', {
   actions: {
     async fetchUserLibrary() {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/library/user', {
+        const res = await axios.get(`${API_BASE_URL}/library/user`, {
           withCredentials: true,
         })
         this.userLibrary = res.data.data
@@ -19,7 +20,7 @@ export const useBookStore = defineStore('book', {
     },
     async fetchKoobLibrary() {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/library/koob', {
+        const res = await axios.get(`${API_BASE_URL}/library/koob`, {
           withCredentials: true,
         })
         this.koobLibrary = res.data.data

@@ -8,6 +8,7 @@ import { useModalStore } from '@/stores/modal'
 import { useUserStore } from '@/stores/user'
 import { useToastStore } from '@/stores/toast'
 import Dashboard from '../Dashboard.vue'
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
 
 const route = useRoute()
 const router = useRouter()
@@ -27,7 +28,7 @@ onMounted(async () => {
   try {
     const userId = userStore.user?.id
     const res = await axios.get(
-      `http://localhost:8080/api/v1/books/user/${userId}/book/${bookId}/recommendations`,
+      `${API_BASE_URL}/books/user/${userId}/book/${bookId}/recommendations`,
       { withCredentials: true },
     )
     similarBooks.value = res.data.data
@@ -43,7 +44,7 @@ onMounted(async () => {
 
 async function addToLibrary(book) {
   try {
-    await axios.post('http://localhost:8080/api/v1/books/save', book, { withCredentials: true })
+    await axios.post(`${API_BASE_URL}/books/save`, book, { withCredentials: true })
     similarBooks.value = similarBooks.value.filter((b) => b.id !== book.id)
     await bookStore.fetchUserLibrary() // Refresh the store
     toast.showToast({

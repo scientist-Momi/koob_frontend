@@ -3,6 +3,7 @@ import { ref, onBeforeUnmount, onMounted, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import axios from 'axios'
 import { useBookStore } from '@/stores/book'
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
 const bookStore = useBookStore()
 
 const dropdownRef = ref(null)
@@ -35,7 +36,7 @@ watch(search, (val) => {
   clearTimeout(debounceTimeout)
   debounceTimeout = setTimeout(async () => {
     try {
-      const res = await axios.get('http://localhost:8080/api/v1/books/search', {
+      const res = await axios.get(`${API_BASE_URL}/books/search`, {
         params: { q: val },
         withCredentials: true,
       })
@@ -50,7 +51,7 @@ watch(search, (val) => {
 
 async function addToLibrary(book) {
   try {
-    await axios.post('http://localhost:8080/api/v1/books/save', book, {
+    await axios.post(`${API_BASE_URL}/books/save`, book, {
       withCredentials: true
     })
     results.value = results.value.filter((b) => b.id !== book.id)

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
 
 // state
 const query = ref("");
@@ -15,7 +16,7 @@ const searchBooks = async () => {
   message.value = "";
 
   try {
-    const res = await axios.get(`http://localhost:8080/api/v1/books/search?q=${query.value}`, {
+    const res = await axios.get(`${API_BASE_URL}/books/search?q=${query.value}`, {
       withCredentials: true, // so cookies (JWT) are included
     });
     results.value = res.data.data; // ApiResponse.data
@@ -32,7 +33,7 @@ const searchBooks = async () => {
 const saveBook = async (book) => {
     // console.log(book)
   try {
-    const res = await axios.post("http://localhost:8080/api/v1/books/save", book, {
+    const res = await axios.post(`${API_BASE_URL}/books/save`, book, {
       withCredentials: true,
     });
     message.value = res.data.message; // ApiResponse.message

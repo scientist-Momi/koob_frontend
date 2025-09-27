@@ -12,6 +12,7 @@
 
 <script>
 import axios from 'axios';
+import { API_BASE_URL, API_BASE_URL_LOCAL, API_BASE } from '@/config';
 
 export default {
   data() {
@@ -23,12 +24,12 @@ export default {
   methods: {
     loginWithGoogle() {
       // Redirect to backend OAuth2 login
-      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+      window.location.href = `${API_BASE}/oauth2/authorization/google`;
     },
     async getCurrentUser() {
       try {
         axios.defaults.withCredentials = true;
-        const res = await axios.get('http://localhost:8080/api/v1/auth/me', {
+        const res = await axios.get(`${API_BASE_URL}/auth/me`, {
           withCredentials: true,
         });
         this.user = res.data;
@@ -41,7 +42,7 @@ export default {
     async logout() {
       try {
         axios.defaults.withCredentials = true;
-        await axios.post('http://localhost:8080/api/v1/auth/logout', {}, {
+        await axios.post(`${API_BASE_URL}/auth/logout`, {}, {
           withCredentials: true,
         });
         this.user = null;

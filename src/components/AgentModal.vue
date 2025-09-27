@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useToastStore } from '@/stores/toast'
 import { useBookStore } from '@/stores/book'
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
 const bookStore = useBookStore()
 const toast = useToastStore()
 const messages = ref([
@@ -21,7 +22,7 @@ async function sendMessage() {
   loading.value = true
   error.value = ''
   try {
-    const res = await axios.post('http://localhost:8080/api/v1/agent/chat', input.value, {
+    const res = await axios.post(`${API_BASE_URL}/agent/chat`, input.value, {
       headers: {
         'Content-Type': 'text/plain',
       },

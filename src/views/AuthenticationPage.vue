@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import KoobLogo from '@/assets/icons/koob_white.svg'
 import GoogleIcon from '@/assets/icons/google.svg'
+import { API_BASE_URL, API_BASE_URL_LOCAL, API_BASE } from '@/config';
 
 const loading = ref(false)
 const error = ref('')
@@ -10,7 +11,7 @@ const loginWithGoogle = () => {
   loading.value = true
   error.value = ''
   try {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google'
+    window.location.href = `${API_BASE}/oauth2/authorization/google`
   } catch (e) {
     error.value = 'Failed to redirect. Please try again.'
     loading.value = false

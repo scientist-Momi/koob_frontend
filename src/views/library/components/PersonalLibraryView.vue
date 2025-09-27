@@ -64,8 +64,6 @@ const filteredBooks = computed(() =>
 
 <template>
   <div class="bg-white px-5 flex flex-col">
-    <!-- <small>{{ bookStore.userLibrary[0].book }}</small> -->
-
     <div class="flex justify-center m-3.5">
       <div class="max-w-[1200px] flex items-center justify-between flex-wrap font-light w-full">
         <div class="border border-[#cfd7e6] rounded-sm flex items-center p-0.5">
@@ -82,57 +80,70 @@ const filteredBooks = computed(() =>
     </div>
     <div class="flex justify-center">
       <div class="max-w-[1200px] flex items-center justify-between flex-wrap font-light w-full">
-        <div
-          v-for="book in filteredBooks"
-          :key="book.id"
-          class="w-full py-2.5 flex flex-col border-b-[0.5px] border-gray-300 mb-3.5"
-        >
-          <div class="flex items-center cursor-pointer text-gray-800">
-            <router-link
-              :to="{ name: 'BookView', params: { id: book.book.id } }"
-              class="max-w-[1200px] w-full items-center p-0 hover:bg-gray-50"
-            >
-              <div class="flex max-w-[1200px] items-center w-full justify-between">
-                <div class="flex items-center">
-                  <div class="w-8 mr-2 flex justify-center items-center">
-                    <!-- <span class="material-symbols-outlined text-[#009799]"> book_2 </span> -->
-                    <span class="material-symbols-outlined text-[#009799]"> split_scene_up </span>
-                    <!-- <span class="material-symbols-outlined text-[#009799]"> bookmark </span> -->
+        <template v-if="filteredBooks.length">
+          <div
+            v-for="book in filteredBooks"
+            :key="book.id"
+            class="w-full py-2.5 flex flex-col border-b-[0.5px] border-gray-300 mb-3.5"
+          >
+            <div class="flex items-center cursor-pointer text-gray-800">
+              <router-link
+                :to="{ name: 'BookView', params: { id: book.book.id } }"
+                class="max-w-[1200px] w-full items-center p-0 hover:bg-gray-50"
+              >
+                <div class="flex max-w-[1200px] items-center w-full justify-between">
+                  <div class="flex items-center">
+                    <div class="w-8 mr-2 flex justify-center items-center">
+                      <span class="material-symbols-outlined text-[#009799]"> split_scene_up </span>
+                    </div>
+                    <span class="text-[15px] text-gray-800">{{ book.book.title }}</span>
                   </div>
-                  <span class="text-[15px] text-gray-800">{{ book.book.title }}</span>
+                  <ol class="text-[13px] p-0 m-0 list-none items-center flex">
+                    <li class="mr-1.5 flex items-center text-gray-500">
+                      <span>
+                        by-
+                        {{
+                          book.book.authors && book.book.authors.length
+                            ? book.book.authors.join(', ')
+                            : 'Unknown'
+                        }}
+                      </span>
+                    </li>
+                    <li><span class="text-gray-500">•</span></li>
+                    <li class="mx-1.5 flex items-center text-gray-500">
+                      <span>pages-{{ book.book.pageCount }}</span>
+                    </li>
+                    <li><span class="text-gray-500">•</span></li>
+                    <li class="mx-1.5 flex items-center text-gray-500">
+                      <span>lang-{{ book.book.language }}</span>
+                    </li>
+                  </ol>
                 </div>
-
-                <ol class="text-[13px] p-0 m-0 list-none items-center flex">
-                  <li class="mr-1.5 flex items-center text-gray-500">
-                    <!-- <span>by-{{ book.book.authors }}</span> -->
-                    <span>
-                      by-
-                      {{
-                        book.book.authors && book.book.authors.length
-                          ? book.book.authors.join(', ')
-                          : 'Unknown'
-                      }}
-                    </span>
-                  </li>
-                  <li><span class="text-gray-500">•</span></li>
-                  <li class="mx-1.5 flex items-center text-gray-500">
-                    <span>pages-{{ book.book.pageCount }}</span>
-                  </li>
-                  <li><span class="text-gray-500">•</span></li>
-                  <li class="mx-1.5 flex items-center text-gray-500">
-                    <span>lang-{{ book.book.language }}</span>
-                  </li>
-                </ol>
-              </div>
-            </router-link>
+              </router-link>
               <div
                 @click="modal.open('confirm_delete', book)"
                 class="flex items-center justify-end ml-3 cursor-pointer"
               >
-                <span class="material-symbols-outlined a1 text-red-600 hover:text-red-400"> delete </span>
+                <span class="material-symbols-outlined a1 text-red-600 hover:text-red-400">
+                  delete
+                </span>
               </div>
+            </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <div class="w-full flex flex-col items-center justify-center py-16">
+            <span class="text-[16px] text-gray-400 mb-4"
+              >No books added to your personal library yet.</span
+            >
+            <button
+              @click="modal.open('agent_modal')"
+              class="bg-[#009799] text-white px-4 text-[15px] py-2 rounded shadow hover:bg-[#007a7a] transition-all cursor-pointer"
+            >
+              Add your first book
+            </button>
+          </div>
+        </template>
       </div>
     </div>
   </div>

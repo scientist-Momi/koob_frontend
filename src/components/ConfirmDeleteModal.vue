@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useModalStore } from '@/stores/modal'
 import { useUserStore } from '@/stores/user'
 import { useBookStore } from '@/stores/book'
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
 const bookStore = useBookStore()
 const userStore = useUserStore()
 import { useToastStore } from '@/stores/toast'
@@ -18,7 +19,7 @@ async function deleteBookFromLibrary(bookId) {
 
   try {
     await axios.delete(
-      `http://localhost:8080/api/v1/library/user/${userId}/book/${bookId}`,
+      `${API_BASE_URL}/library/user/${userId}/book/${bookId}`,
       { withCredentials: true },
     )
     await bookStore.fetchUserLibrary()

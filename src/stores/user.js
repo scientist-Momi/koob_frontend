@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -14,7 +15,7 @@ export const useUserStore = defineStore('user', {
       if (this.user || this.loading) return 
       this.loading = true
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/auth/me', {
+        const res = await axios.get(`${API_BASE_URL}/auth/me`, {
           withCredentials: true,
         })
         this.user = res.data.data
@@ -25,7 +26,7 @@ export const useUserStore = defineStore('user', {
       }
     },
     async logout() {
-      await axios.post('http://localhost:8080/api/v1/auth/logout', {}, { withCredentials: true })
+      await axios.post(`${API_BASE_URL}/auth/logout`, {}, { withCredentials: true })
       this.user = null
     },
   },
