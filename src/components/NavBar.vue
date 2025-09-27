@@ -91,21 +91,33 @@ const handleAgent = () => {
               <li class="border-b border-gray-100 text-[#009799]">
                 <RouterLink
                   :to="{ name: 'Settings' }"
-                  class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5"
+                  class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5 pointer-events-none opacity-60"
                   @click="open2 = false"
+                  aria-disabled="true"
+                  tabindex="-1"
                 >
                   <span class="material-symbols-outlined"> view_in_ar </span>
                   <span>Browse Boxes</span>
+                  <small
+                    class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-700 text-[9px] font-semibold"
+                    >Unavailable</small
+                  >
                 </RouterLink>
               </li>
               <li class="border-b border-gray-100 text-[#009799]">
                 <RouterLink
                   :to="{ name: 'Settings' }"
-                  class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5"
+                  class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5 pointer-events-none opacity-60"
                   @click="open2 = false"
+                  aria-disabled="true"
+                  tabindex="-1"
                 >
                   <span class="material-symbols-outlined"> note_stack </span>
                   <span>Browse Libraries</span>
+                  <small
+                    class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-700 text-[9px] font-semibold"
+                    >Unavailable</small
+                  >
                 </RouterLink>
               </li>
             </ul>
@@ -164,7 +176,7 @@ const handleAgent = () => {
                   </p>
                 </RouterLink>
               </li>
-              <li class="border-b border-gray-100 text-[#009799]">
+              <!-- <li class="border-b border-gray-100 text-[#009799]">
                 <RouterLink
                   :to="{ name: 'Settings' }"
                   class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5"
@@ -173,7 +185,7 @@ const handleAgent = () => {
                   <span class="material-symbols-outlined"> settings </span>
                   <span>Account Settings</span>
                 </RouterLink>
-              </li>
+              </li> -->
               <li class="border-b border-gray-100 text-[#009799]">
                 <a
                   class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5"

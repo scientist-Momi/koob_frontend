@@ -40,37 +40,52 @@ onBeforeUnmount(() => {
 
           <div
             v-if="open"
-            class="absolute right-0 mt-0.5 min-w-[180px] bg-white rounded custom-shadow z-10 overflow-hidden"
+            class="absolute right-0 mt-0.5 min-w-[270px] bg-white rounded custom-shadow z-10 overflow-hidden"
           >
             <ul class="text-[13px] font-light text-gray-500">
               <li class="border-b border-gray-200">
                 <RouterLink
                   :to="{ name: 'Dashboard' }"
-                  class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5 rounded m-0.5"
-                  @click="open = false"
+                  aria-disabled="true"
+                  tabindex="-1"
+                  class="px-4 py-2 flex items-center gap-2.5 rounded m-0.5 pointer-events-none opacity-60 bg-gray-50"
                 >
                   <span class="material-symbols-outlined a2"> view_apps </span>
                   <span>Create New Box</span>
+                  <small
+                    class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-700 text-[9px] font-semibold"
+                    >Unavailable</small
+                  >
                 </RouterLink>
               </li>
               <li class="border-b border-gray-200">
                 <RouterLink
                   :to="{ name: 'new-library' }"
-                  class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5 rounded m-0.5"
-                  @click="open = false"
+                  aria-disabled="true"
+                  tabindex="-1"
+                  class="px-4 py-2 flex items-center gap-2.5 rounded m-0.5 pointer-events-none opacity-60 bg-gray-50"
                 >
                   <span class="material-symbols-outlined a2"> view_apps </span>
                   <span>Create New Library</span>
+                  <small
+                    class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-700 text-[9px] font-semibold"
+                    >Unavailable</small
+                  >
                 </RouterLink>
               </li>
               <li class="border-b border-gray-100">
                 <RouterLink
                   :to="{ name: 'Settings' }"
-                  class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5"
-                  @click="open = false"
+                  aria-disabled="true"
+                  tabindex="-1"
+                  class="px-4 py-2 flex items-center gap-2.5 pointer-events-none opacity-60 bg-gray-50"
                 >
                   <span class="material-symbols-outlined a2"> pageview </span>
                   <span>Get New Book</span>
+                  <small
+                    class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-700 text-[9px] font-semibold"
+                    >Unavailable</small
+                  >
                 </RouterLink>
               </li>
             </ul>

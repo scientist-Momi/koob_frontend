@@ -8,7 +8,7 @@ const toast = useToastStore()
 const messages = ref([
   {
     sender: 'agent',
-    text: 'Hi! I am your AI agent. How can I help you today? I can help you with searching for books, and adding books to your library.',
+    text: 'Hi! I am your AI agent. I can help you with searching for books, and adding books to your library. How can i help you today. Remember due to limits you only can use me 5 times in a day.',
   },
 ])
 const input = ref('')
@@ -53,11 +53,11 @@ const modal = useModalStore()
   <div v-if="modal.isOpen && modal.type === 'agent_modal'">
     <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
       <div
-        class="bg-white rounded-[10px] shadow-[0_0_0_2px_#009799] w-full max-w-[800px] min-h-[400px] overflow-scroll max-h-[700px] flex flex-col"
+        class="bg-white rounded-[5px] shadow-[0_0_0_2px_#009799] w-full max-w-[800px] min-h-[400px] overflow-scroll max-h-[700px] flex flex-col"
       >
         <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
           <span class="font-semibold text-[17px] text-[#009799]">Koob Agent</span>
-          <button class="text-gray-400 hover:text-gray-600 text-xl" @click="modal.close">
+          <button class="text-gray-400 hover:text-gray-600 text-xl cursor-pointer" @click="modal.close">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>

@@ -67,7 +67,7 @@ async function deleteBookFromLibrary(bookId) {
               </button>
               <button
                 @click="deleteBookFromLibrary(book.book.id)"
-                class="shadow-[0_0_0_1px_#E3E7EF] bg-[#009799] text-white h-[32px] flex items-center justify-center text-center py-1 px-4 rounded-[4px] border border-[#009799] hover:bg-[#006b6c] cursor-pointer"
+                class="shadow-red-600 bg-red-600 text-white h-[32px] flex items-center justify-center text-center py-1 px-4 rounded-[4px] border border-red-600 hover:bg-red-500 cursor-pointer"
               >
                 Remove
               </button>
