@@ -6,8 +6,12 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 import svgLoader from 'vite-svg-loader'
 
-// https://vite.dev/config/
 export default defineConfig({
+  base: '/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  },
   plugins: [vue(), vueDevTools(), tailwindcss(), svgLoader()],
   resolve: {
     alias: {

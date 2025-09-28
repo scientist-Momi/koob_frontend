@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
 const DefaultLayout = () => import('@/layouts/DefaultLayout.vue')
@@ -11,7 +11,7 @@ const Settings = () => import('@/views/SettingsPage.vue')
 const NewLibrary = () => import('@/views/library/NewLibraryView.vue')
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
