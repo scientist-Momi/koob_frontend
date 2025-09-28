@@ -1,31 +1,13 @@
-<!doctype html>
-<html lang="">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
-    <title>Vite App</title>
-    <script type="module" crossorigin src="/assets/index-CqXOPxsQ.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CWCD4UH0.css">
-  </head>
-  <body>
-    <div id="app"></div>
-    <script>
-      if (!location.hash && location.pathname !== '/') {
-        location.replace('/#' + location.pathname)
+    <meta charset="utf-8">
+    <script type="text/javascript">
+      var redirect = location.pathname.replace(/^\//, '');
+      if (redirect && redirect !== 'index.html') {
+        location.replace('/#/' + redirect);
       }
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-  </body>
+  </head>
+  <body></body>
 </html>
