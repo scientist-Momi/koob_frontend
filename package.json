@@ -12,8 +12,8 @@
     "build": "vite build && cp dist/index.html dist/404.html",
     "preview": "vite preview",
     "format": "prettier --write src/",
-    "deploy1": "vite build && gh-pages -d dist --cname koob.oolumomi.dev -b gh-pages --repo https://github.com/scientist-Momi/koob_frontend.git",
-    "deploy": "vite build && cp dist/index.html dist/404.html && gh-pages -d dist -m 'Deploy update' --cname koob.oolumomi.dev",
+    "deploy": "vite build && cp dist/index.html dist/404.html && gh-pages -d dist --cname koob.oolumomi.dev -b gh-pages --repo https://github.com/scientist-Momi/koob_frontend.git",
+    "deploy1": "vite build && cp dist/index.html dist/404.html && gh-pages -d dist -m 'Deploy update' --cname koob.oolumomi.dev",
     "deploy3": "vite build && cp dist/index.html dist/404.html && gh-pages -d dist --cname koob.oolumomi.dev",
     "deploy2": "vite build && gh-pages -d dist"
   },
