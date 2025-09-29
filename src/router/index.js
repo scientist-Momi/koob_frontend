@@ -61,17 +61,40 @@ const router = createRouter({
   ],
 })
 
+// router.beforeEach(async (to, from, next) => {
+//   const userStore = useUserStore()
+
+//   if (!userStore.user && !userStore.loading) {
+//     await userStore.fetchUser()
+//   }
+//   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+//     next('/')
+//   } else {
+//     next()
+//   }
+// })
+
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
 
   if (!userStore.user && !userStore.loading) {
-    await userStore.fetchUser()
+    try {
+      await userStore.fetchUser() // will call backend with cookie
+    } catch (e) {
+      // user not logged in
+    }
   }
+
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-    next('/')
-  } else {
-    next()
+    return next('/')
   }
+
+  // ✅ If backend returned a redirectUrl, go there
+  if (to.fullPath === '/' && userStore.isLoggedIn) {
+    return next('/app/dashboard')
+  }
+
+  next()
 })
 
 export default router
