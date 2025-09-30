@@ -3,13 +3,24 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useToastStore } from '@/stores/toast'
 import { useBookStore } from '@/stores/book'
-import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config'
 const bookStore = useBookStore()
 const toast = useToastStore()
 const messages = ref([
   {
     sender: 'agent',
-    text: 'Hi! I am your AI agent. I can help you with searching for books, and adding books to your library. How can i help you today. Remember due to limits you only can use me 5 times in a day.',
+    text: `Hi! I'm your Koob AI agent. I'm here to help you manage your personal library efficiently.
+
+Here's what I can do for you:
+• Search for books across a vast database
+• Add books directly to your personal library
+• Provide book recommendations based on your interests
+• Help you discover new titles and authors
+• Answer questions about books and reading
+
+Simply tell me what you're looking for or what you'd like to do, and I'll take care of the rest!
+
+Please note: Due to usage limits, you can interact with me up to 5 times per day. How can I assist you today?`,
   },
 ])
 const input = ref('')
@@ -52,13 +63,16 @@ const modal = useModalStore()
 
 <template>
   <div v-if="modal.isOpen && modal.type === 'agent_modal'">
-    <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+    <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
       <div
-        class="bg-white rounded-[5px] shadow-[0_0_0_2px_#009799] w-full max-w-[800px] min-h-[400px] overflow-scroll max-h-[700px] flex flex-col"
+        class="bg-white rounded-[5px] shadow-[0_0_0_2px_#009799] w-full max-w-[60vw] h-[85vh] max-h-[700px] min-h-[500px] flex flex-col"
       >
         <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
           <span class="font-semibold text-[17px] text-[#009799]">Koob Agent</span>
-          <button class="text-gray-400 hover:text-gray-600 text-xl cursor-pointer" @click="modal.close">
+          <button
+            class="text-gray-400 hover:text-gray-600 text-xl cursor-pointer"
+            @click="modal.close"
+          >
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -82,7 +96,7 @@ const modal = useModalStore()
             <div
               class="bg-gray-200 text-gray-500 rounded-lg px-4 py-2 max-w-[80%] text-[14px] font-normal animate-pulse"
             >
-              Agent is typing...
+              Agent is working...
             </div>
           </div>
         </div>
