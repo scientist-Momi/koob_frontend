@@ -1,4 +1,4 @@
-#  Koob Library App — Backend  
+#  Koob Library App — Frontend 
 > **An intelligent book and article management system powered by Spring Boot, PostgreSQL, and OpenAI.**
 
 ![Koob Banner](src/assets/koob_banner.png)
@@ -55,3 +55,9 @@ The backend, built with **Spring Boot**, integrates the **Google Books API** and
 
 ###  AI Agent Query and Response
 ![AI Agent Query and Response](src/assets/p12.png)
+
+---
+
+##  Try App
+
+[Koob App](https://koob.oolumomi.dev)
