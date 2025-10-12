@@ -1,4 +1,4 @@
-# 🧠 Koob Library App — Backend  
+#  Koob Library App — Backend  
 > **An intelligent book and article management system powered by Spring Boot, PostgreSQL, and OpenAI.**
 
 ![Koob Banner](src/assets/koob_banner.png)
@@ -12,30 +12,30 @@ The backend, built with **Spring Boot**, integrates the **Google Books API** and
 
 ---
 
-## ✨ Features
+##  Features
 
-### 📚 Core Functionality
-- 🔍 **Google Books API Integration** — Seamless search and import of book and article metadata.  
-- 💾 **Personal Library Management** — Store and organize books and articles for later access.  
-- 🗄️ **PostgreSQL Database** — Optimized for high-performance retrieval and efficient metadata management.  
-- ⚖️ **Rate Limiting** — Implemented with **Bucket4j** for scalable traffic control and fair resource allocation.
+###  Core Functionality
+-  **Google Books API Integration** — Seamless search and import of book and article metadata.  
+-  **Personal Library Management** — Store and organize books and articles for later access.  
+-  **PostgreSQL Database** — Optimized for high-performance retrieval and efficient metadata management.  
+-  **Rate Limiting** — Implemented with **Bucket4j** for scalable traffic control and fair resource allocation.
 
-### 🤖 AI Agent
-- 💬 Built using **Spring AI** and **OpenAI GPT models**.  
-- 🧠 Understands **natural language commands** and performs contextual actions (search, save, recommend).  
-- 🪄 Integrates **prompt engineering** for accuracy and intent awareness.
+###  AI Agent
+-  Built using **Spring AI** and **OpenAI GPT models**.  
+-  Understands **natural language commands** and performs contextual actions (search, save, recommend).  
+-  Integrates **prompt engineering** for accuracy and intent awareness.
 
-### 📈 Smart Recommendations
-- 📚 Suggests personalized books and articles based on user interests and reading patterns.
+###  Smart Recommendations
+-  Suggests personalized books and articles based on user interests and reading patterns.
 
-### ☁️ Deployment & DevOps
-- 🚀 **Heroku Cloud** for backend deployment.  
-- 🌐 **Cloudflare Pages** for frontend hosting.  
-- 🔁 **Git-based CI/CD pipelines** for automated deployment and updates.
+###  Deployment & DevOps
+-  **Heroku Cloud** for backend deployment.  
+-  **Cloudflare Pages** for frontend hosting.  
+-  **Git-based CI/CD pipelines** for automated deployment and updates.
 
 ---
 
-## 🧱 Architecture Overview
+##  Architecture Overview
 
 ![Architecture Diagram](src/assets/arc.png)
 
@@ -47,3 +47,11 @@ The backend, built with **Spring Boot**, integrates the **Google Books API** and
 5. **External Service:** Google Books API  
 
 ---
+
+##  Visuals
+
+###  Book Search Response
+![Book Search Response](src/assets/p17.png)
+
+###  AI Agent Query and Response
+![AI Agent Query and Response](src/assets/p12.png)
