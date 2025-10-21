@@ -1,15 +1,49 @@
 <script setup>
-import { ref, onBeforeUnmount, onMounted } from 'vue'
+import { ref, onBeforeUnmount, onMounted, computed, watch } from 'vue'
 import PersonalLibraryView from '@/views/library/components/PersonalLibraryView.vue'
+import { useBookStore } from '@/stores/book'
+import SwitchBox from '@/components/SwitchBox.vue'
+import { useRoute } from 'vue-router'
 
+const bookStore = useBookStore()
 const open = ref(false)
+const open2 = ref(false)
+const route = useRoute()
 const handleClickOutside = (event) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
     open.value = false
   }
+  if (dropdownRef2.value && !dropdownRef2.value.contains(event.target)) {
+    open2.value = false
+  }
 }
 
+onMounted(async () => {
+  await bookStore.fetchBoxes()
+
+  const paramBoxId = route.params.boxId || route.query.box
+  if (paramBoxId) {
+    bookStore.selectBox(Number(paramBoxId))
+  } else if (!bookStore.selectedBoxId && bookStore.userBoxes.length) {
+    bookStore.selectBox(bookStore.userBoxes[0].id) // default
+    // Optionally update the route to reflect the default:
+    router.replace({ name: 'DashboardBox', params: { boxId: bookStore.selectedBoxId } })
+  }
+})
+
+watch(
+  () => route.params.boxId,
+  (newId) => {
+    if (newId) bookStore.selectBox(Number(newId))
+  },
+)
+
+const currentBoxName = computed(() =>
+  bookStore.selectedBox ? bookStore.selectedBox.name : 'Personal Box',
+)
+
 const dropdownRef = ref(null)
+const dropdownRef2 = ref(null)
 onMounted(() => {
   document.addEventListener('mousedown', handleClickOutside)
 })
@@ -25,10 +59,24 @@ onBeforeUnmount(() => {
       class="px-5 py-2.5 min-h-[63px] flex justify-center border-b-[0.25px] border-gray-300 bg-gray-100"
     >
       <div class="max-w-[1200px] flex items-center justify-between flex-wrap font-light w-full">
-        <div class="flex text-[15px] items-center text-[#009799] gap-2">
-          <span class="material-symbols-outlined"> home_storage </span>
-          <span>Personal Library</span>
+        <div class="relative" ref="dropdownRef2">
+          <div
+            @click="open2 = !open2"
+            class="flex text-[15px] items-center text-[#009799] gap-2 cursor-pointer hover:bg-gray-200 p-1.5 rounded-sm"
+          >
+            <span class="material-symbols-outlined"> home_storage </span>
+            <span>{{ currentBoxName }}</span>
+            <span class="material-symbols-outlined a1 mr-1"> expand_all </span>
+          </div>
+
+          <div
+            v-if="open2"
+            class="absolute left-0 mt-0.5 min-w-[300px] min-h-[300px] bg-white rounded shadow-lg z-10 overflow-hidden outline outline-gray-300"
+          >
+            <SwitchBox @select="open2 = false" />
+          </div>
         </div>
+
         <div class="relative" ref="dropdownRef">
           <button
             @click="open = !open"
@@ -61,16 +109,14 @@ onBeforeUnmount(() => {
               <li class="border-b border-gray-200">
                 <RouterLink
                   :to="{ name: 'new-library' }"
-                  aria-disabled="true"
-                  tabindex="-1"
-                  class="px-4 py-2 flex items-center gap-2.5 rounded m-0.5 pointer-events-none opacity-60 bg-gray-50"
+                  class="px-4 py-2 flex items-center gap-2.5 rounded m-0.5 bg-gray-50"
                 >
                   <span class="material-symbols-outlined a2"> view_apps </span>
-                  <span>Create New Library</span>
-                  <small
+                  <span>Create New Box</span>
+                  <!-- <small
                     class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-700 text-[9px] font-semibold"
                     >Unavailable</small
-                  >
+                  > -->
                 </RouterLink>
               </li>
               <li class="border-b border-gray-100">
@@ -94,7 +140,8 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <!-- Main content -->
-    <PersonalLibraryView />
+    <!-- <PersonalLibraryView /> -->
+    <router-view />
   </div>
 </template>
 
@@ -112,72 +159,3 @@ onBeforeUnmount(() => {
     0 0 0 1px rgba(0, 151, 153, 0.1);
 }
 </style>
-
-<!-- <template>
-  <div>
-    <h2>Dashboard</h2>
-    <button @click="logout">Logout</button>
-    <button @click="book">Book</button>
-    <div v-if="user">
-      <p>Welcome, {{ user.name }} ({{ user.email }})</p>
-      <pre>{{ user }}</pre>
-    </div>
-    <div v-else>
-      <p>Loading user info...</p>
-      <div v-if="error" style="color: red">{{ error }}</div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
-
-const user = ref(null);
-const error = ref(null);
-const router = useRouter();
-
-const fetchUser = async () => {
-  try {
-    axios.defaults.withCredentials = true;
-    const res = await axios.get('http://localhost:8080/api/v1/auth/me', {
-      withCredentials: true,
-    });
-    user.value = res.data;
-  } catch (err) {
-    if (err.response && err.response.status === 401) {
-      router.push({ path: '/' });
-    } else {
-      error.value = err.response ? err.response.data : err.message;
-    }
-  }
-};
-
-const book = () => {
-    router.push({ path: '/book' });
-}
-
-const logout = async () => {
-  try {
-    axios.defaults.withCredentials = true;
-    await axios.post(
-      'http://localhost:8080/api/v1/auth/logout',
-      {},
-      { withCredentials: true }
-    );
-    user.value = null;
-    error.value = 'Logged out';
-    router.push({ path: '/login' });
-  } catch (err) {
-    error.value = err.response ? err.response.data : err.message;
-  }
-};
-
-onMounted(fetchUser);
-</script>
-<style scoped>
-h2 {
-  margin-bottom: 1rem;
-}
-</style> -->

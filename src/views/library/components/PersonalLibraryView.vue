@@ -1,12 +1,14 @@
 <script setup>
-import { onMounted, ref, computed, onBeforeUnmount } from 'vue'
+import { onMounted, ref, computed, onBeforeUnmount, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { useBookStore } from '@/stores/book'
 import { useModalStore } from '@/stores/modal'
+import { useUserStore } from '@/stores/user'
 
 const modal = useModalStore()
 const bookStore = useBookStore()
 const toast = useToastStore()
+const user = useUserStore()
 
 const search = ref('')
 const openDropdownId = ref(null)
@@ -32,12 +34,33 @@ function handleClickOutside(event) {
 }
 const dropdownRef = ref(null)
 
-onMounted(() => {
-  document.addEventListener('mousedown', handleClickOutside)
-})
+watch(
+  () => bookStore.selectedBoxId,
+  (newId) => {
+    if (newId) {
+      const userId = bookStore.userLibrary?.length ? bookStore.userLibrary[0]?.userId : null
+      if (userId) bookStore.fetchBoxContents(newId, userId)
+    }
+  },
+)
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', handleClickOutside)
+})
+
+// Consolidated initialization: fetch user library and boxes, then fetch contents for the selected box
+onMounted(async () => {
+  document.addEventListener('mousedown', handleClickOutside)
+
+  // load user library and boxes first
+  await bookStore.fetchBoxes()
+
+  const id = bookStore.selectedBoxId
+  const userId = user.user.id
+
+  if (id && userId) {
+    await bookStore.fetchBoxContents(id, userId)
+  }
 })
 
 function show() {
@@ -49,16 +72,25 @@ function show() {
 }
 
 onMounted(() => {
-  bookStore.fetchUserLibrary()
+  bookStore.fetchBoxes()
+})
+
+const boxBooks = computed(() => {
+  const id = bookStore.selectedBoxId
+  return id ? bookStore.boxContents?.[id] || [] : []
 })
 
 const filteredBooks = computed(() =>
-  bookStore.userLibrary.filter((item) => {
+  boxBooks.value.filter((item) => {
     const title = item.book.title?.toLowerCase() || ''
     const authors = (item.book.authors || []).join(' ').toLowerCase()
     const query = search.value.toLowerCase()
     return title.includes(query) || authors.includes(query)
   }),
+)
+
+const selectedBoxName = computed(() =>
+  bookStore.selectedBox ? bookStore.selectedBox.name : 'your personal library',
 )
 </script>
 
@@ -72,7 +104,7 @@ const filteredBooks = computed(() =>
             v-model="search"
             type="text"
             class="w-full text-[13px] py-1 pr-2.5 pl-2 outline-0 bg-white text-sm text-gray-800"
-            placeholder="Filter books in personal library"
+            placeholder="Filter box items"
             size="32"
           />
         </div>
@@ -133,14 +165,15 @@ const filteredBooks = computed(() =>
         </template>
         <template v-else>
           <div class="w-full flex flex-col items-center justify-center py-16">
-            <span class="text-[16px] text-gray-400 mb-4"
-              >No books added to your personal library yet.</span
-            >
+            <span class="text-[16px] text-gray-400 mb-4">
+              No item added to your <span class="text-[#009799]">{{ selectedBoxName }}</span> box
+              yet.
+            </span>
             <button
               @click="modal.open('agent_modal')"
               class="bg-[#009799] text-white px-4 text-[15px] py-2 rounded shadow hover:bg-[#007a7a] transition-all cursor-pointer"
             >
-              Add your first book
+              Add your first item
             </button>
           </div>
         </template>

@@ -1,47 +1,45 @@
 <script setup>
-import { ref } from "vue";
-import axios from "axios";
-import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
+import { ref } from 'vue'
+import api from '@/lib/api'
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config'
 
 // state
-const query = ref("");
-const results = ref([]);
-const loading = ref(false);
-const message = ref("");
+const query = ref('')
+const results = ref([])
+const loading = ref(false)
+const message = ref('')
 
 // search books from backend (which calls Google Books API)
 const searchBooks = async () => {
-  if (!query.value) return;
-  loading.value = true;
-  message.value = "";
+  if (!query.value) return
+  loading.value = true
+  message.value = ''
 
   try {
-    const res = await axios.get(`${API_BASE_URL}/books/search?q=${query.value}`, {
-      withCredentials: true, // so cookies (JWT) are included
-    });
-    results.value = res.data.data; // ApiResponse.data
+    const res = await api.get('/books/search', {
+      params: { q: query.value },
+    })
+    results.value = res.data.data // ApiResponse.data
     console.log('results ', results.value)
   } catch (err) {
-    message.value = "Error fetching books.";
-    console.error(err);
+    message.value = 'Error fetching books.'
+    console.error(err)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 // save book to backend
 const saveBook = async (book) => {
-    // console.log(book)
+  // console.log(book)
   try {
-    const res = await axios.post(`${API_BASE_URL}/books/save`, book, {
-      withCredentials: true,
-    });
-    message.value = res.data.message; // ApiResponse.message
+    const res = await api.post('/books/save', book)
+    message.value = res.data.message // ApiResponse.message
   } catch (err) {
-    message.value = "Error saving book.";
-    console.error(err);
+    message.value = 'Error saving book.'
+    console.error(err)
   }
-};
+}
 </script>
 
 <template>
@@ -86,7 +84,7 @@ const saveBook = async (book) => {
         />
         <div class="flex-1">
           <h2 class="font-semibold text-lg">{{ book.title }}</h2>
-          <p class="text-sm text-gray-600">By: {{ book.authors?.join(", ") }}</p>
+          <p class="text-sm text-gray-600">By: {{ book.authors?.join(', ') }}</p>
           <p class="text-sm text-gray-500">{{ book.publisher }} • {{ book.publishedDate }}</p>
           <p class="text-sm mt-2 line-clamp-3">{{ book.description }}</p>
           <button

@@ -1,11 +1,17 @@
 <script setup>
-import { ref } from 'vue'
-import axios from 'axios'
+import { ref, computed } from 'vue'
+import api, { buildUrl } from '@/lib/api'
 import { useToastStore } from '@/stores/toast'
 import { useBookStore } from '@/stores/book'
 import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config'
+import { useUserStore } from '@/stores/user'
+
+const user = useUserStore()
 const bookStore = useBookStore()
 const toast = useToastStore()
+const selectedBoxName = computed(() =>
+  bookStore.selectedBox ? bookStore.selectedBox.name : 'No box selected',
+)
 const messages = ref([
   {
     sender: 'agent',
@@ -33,15 +39,21 @@ async function sendMessage() {
   loading.value = true
   error.value = ''
   try {
-    const res = await axios.post(`${API_BASE_URL}/agent/chat`, input.value, {
-      headers: {
-        'Content-Type': 'text/plain',
+    const res = await api.post(
+      '/agent/chat',
+      {
+        userMessage: input.value,
+        boxId: bookStore.selectedBoxId,
       },
-      withCredentials: true,
-    })
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
     messages.value.push({ sender: 'agent', text: res.data.data })
     input.value = ''
-    await bookStore.fetchUserLibrary()
+    await bookStore.fetchBoxContents(bookStore.selectedBoxId, user.user.id)
   } catch (err) {
     let errorMsg = 'Error communicating with the agent.'
     if (err.response?.data?.status === 'error' && err.response?.data?.message) {
@@ -100,21 +112,29 @@ const modal = useModalStore()
             </div>
           </div>
         </div>
-        <form class="px-5 py-4 border-t border-gray-200 flex gap-2" @submit.prevent="sendMessage">
-          <input
-            v-model="input"
-            type="text"
-            class="flex-1 border border-[#009799] rounded-sm h-[38px] px-3 outline-0 bg-white text-sm text-gray-800"
-            placeholder="Type your request..."
-            :disabled="loading"
-          />
-          <button
-            type="submit"
-            class="bg-[#009799] text-white px-4 rounded font-medium text-sm h-[38px] flex items-center justify-center"
-            :disabled="loading || !input.trim()"
+        <form class="px-5 pb-4 border-t border-gray-200" @submit.prevent="sendMessage">
+          <div
+            class="text-[12px] flex items-center border border-[#009799] w-fit rounded-sm mb-1 mt-2 p-0.5 pr-1 gap-1"
           >
-            <span class="material-symbols-outlined">send</span>
-          </button>
+            <span class="material-symbols-outlined text-[#009799] a1"> home_storage </span>
+            {{ selectedBoxName }}
+          </div>
+          <div class="flex gap-2">
+            <input
+              v-model="input"
+              type="text"
+              class="flex-1 border border-[#009799] rounded-sm h-[38px] px-3 outline-0 bg-white text-sm text-gray-800"
+              placeholder="Type your request..."
+              :disabled="loading"
+            />
+            <button
+              type="submit"
+              class="bg-[#009799] text-white px-4 rounded font-medium text-sm h-[38px] flex items-center justify-center"
+              :disabled="loading || !input.trim()"
+            >
+              <span class="material-symbols-outlined">send</span>
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -140,5 +160,9 @@ const modal = useModalStore()
   50% {
     opacity: 0.5;
   }
+}
+
+.a1 {
+  font-size: 18px;
 }
 </style>

@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import api from '@/lib/api'
 import { useModalStore } from '@/stores/modal'
 import { useUserStore } from '@/stores/user'
 import { useBookStore } from '@/stores/book'
-import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config'
 const bookStore = useBookStore()
 const userStore = useUserStore()
 import { useToastStore } from '@/stores/toast'
@@ -18,11 +18,8 @@ async function deleteBookFromLibrary(bookId) {
   if (!userId || !bookId) return
 
   try {
-    await axios.delete(
-      `${API_BASE_URL}/library/user/${userId}/book/${bookId}`,
-      { withCredentials: true },
-    )
-    await bookStore.fetchUserLibrary()
+    await api.delete(`/boxes/${bookStore.selectedBoxId}/book/${bookId}`)
+    await bookStore.fetchBoxContents(bookStore.selectedBoxId, userId)
     modal.close()
     toast.showToast({
       message: 'Book has been removed',
@@ -57,7 +54,7 @@ async function deleteBookFromLibrary(bookId) {
             <p class="text-[13px] text-gray-700 mb-6">
               You are about to remove
               <span class="font-medium text-[#009799]">{{ book.book.title }}</span> from your
-              library. This action cannot be undone. 
+              library. This action cannot be undone.
             </p>
             <div class="flex justify-between text-[13px]">
               <button

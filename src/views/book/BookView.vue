@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import axios from 'axios'
+import api from '@/lib/api'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 import { useBookStore } from '@/stores/book'
@@ -8,7 +8,7 @@ import { useModalStore } from '@/stores/modal'
 import { useUserStore } from '@/stores/user'
 import { useToastStore } from '@/stores/toast'
 import Dashboard from '../Dashboard.vue'
-import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config';
+import { API_BASE_URL, API_BASE_URL_LOCAL } from '@/config'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,32 +21,54 @@ const toast = useToastStore()
 const showFullDescription = ref(false)
 
 const bookId = Number(route.params.id)
-const bookItem = computed(() => bookStore.userLibrary.find((item) => item.book.id === bookId))
+// derive current box contents for the selected box and find the matching book item
+const currentBoxItems = computed(() => {
+  const id = bookStore.selectedBoxId
+  return id ? bookStore.boxContents?.[id] || [] : []
+})
+
+const bookItem = computed(() => currentBoxItems.value.find((item) => item.book.id === bookId))
+
+const selectedBoxName = computed(() =>
+  bookStore.selectedBox ? bookStore.selectedBox.name : 'Personal Library',
+)
 
 onMounted(async () => {
   loading.value = true
   try {
     const userId = userStore.user?.id
-    const res = await axios.get(
-      `${API_BASE_URL}/books/user/${userId}/book/${bookId}/recommendations`,
-      { withCredentials: true },
+    const res = await api.get(
+      `/books/box/${bookStore.selectedBoxId}/book/${bookId}/recommendations`,
     )
     similarBooks.value = res.data.data
   } catch (err) {
     similarBooks.value = []
   }
-  if (!bookStore.userLibrary.length) {
-    await bookStore.fetchUserLibrary()
+  // Ensure box contents for the selected box are loaded (use authenticated user id)
+  const selectedBoxId = bookStore.selectedBoxId
+  const userId = userStore.user?.id
+  if (selectedBoxId && userId) {
+    await bookStore.fetchBoxContents(selectedBoxId, userId)
   }
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  // small delay to avoid jank when opening the page
+  await new Promise((resolve) => setTimeout(resolve, 300))
   loading.value = false
 })
 
 async function addToLibrary(book) {
   try {
-    await axios.post(`${API_BASE_URL}/books/save`, book, { withCredentials: true })
+    const libraryId = bookStore.selectedBoxId
+    await api.post('/books/saveToBox', {
+      libraryId,
+      items: [book],
+    })
     similarBooks.value = similarBooks.value.filter((b) => b.id !== book.id)
-    await bookStore.fetchUserLibrary() // Refresh the store
+    const userId = userStore.user?.id
+    if (libraryId && userId) {
+      await bookStore.fetchBoxContents(libraryId, userId)
+    } else {
+      await bookStore.fetchUserLibrary()
+    }
     toast.showToast({
       message: 'Book has been added',
       type: 'success',
@@ -106,7 +128,7 @@ function formatDateTime(dateString) {
 const confirmDelete = () => {
   modal.open('confirm_delete', bookItem)
 
-  router.push({ name: 'Dashboard' })
+  router.push({ name: 'DashboardBox', params: {boxId: bookStore.selectedBoxId} })
 }
 </script>
 
@@ -123,11 +145,11 @@ const confirmDelete = () => {
           <div class="max-w-[1200px] flex items-center justify-between flex-wrap font-light w-full">
             <div class="flex items-center gap-2.5 text-[15px]">
               <router-link
-                :to="{ name: 'Dashboard' }"
+                :to="{ name: 'DashboardBox', params: { boxId: bookStore.selectedBoxId } }"
                 class="flex items-center text-[#009799] gap-2 py-1.5 px-1 hover:bg-gray-200 rounded cursor-pointer"
               >
                 <span class="material-symbols-outlined"> home_storage </span>
-                <span>Personal Library</span>
+                <span>{{ selectedBoxName }}</span>
               </router-link>
               <span class="material-symbols-outlined"> chevron_right </span>
               <div class="flex items-center">
@@ -206,7 +228,7 @@ const confirmDelete = () => {
                   <transition name="fade">
                     <div
                       v-if="showFullDescription"
-                      class="absolute left-1/2 z-40 w-full -translate-x-1/2  bg-white rounded-lg shadow-lg border border-gray-200 p-4"
+                      class="absolute left-1/2 z-40 w-full -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 p-4"
                     >
                       <div class="flex justify-between items-center mb-2">
                         <h2 class="text-[14px] font-medium text-gray-800">Full Summary</h2>
@@ -331,8 +353,8 @@ const confirmDelete = () => {
                       <span class="font-light text-green-600">New Book added to library.</span>
                     </div>
                     <div class="text-[13px] text-gray-400">
-                      <time :datetime="bookItem.addedAt">{{
-                        formatDateTime(bookItem.addedAt)
+                      <time :datetime="bookItem.createdAt">{{
+                        formatDateTime(bookItem.createdAt)
                       }}</time>
                     </div>
                   </div>

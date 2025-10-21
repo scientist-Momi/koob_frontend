@@ -80,7 +80,7 @@ const handleAgent = () => {
             <ul class="text-[14px] font-light">
               <li class="border-b border-gray-100 text-[#009799]">
                 <RouterLink
-                  :to="{ name: 'Dashboard' }"
+                  :to="{ name: 'DashboardDefault' }"
                   class="cursor-pointer px-4 py-2 hover:bg-gray-50 flex items-center gap-2.5 active:border-[1.5px] rounded m-0.5 active:border-[#009799]"
                   @click="open2 = false"
                 >

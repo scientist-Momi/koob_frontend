@@ -27,6 +27,19 @@ const router = createRouter({
           component: Dashboard,
           name: 'Dashboard',
           meta: { requiresAuth: true },
+          children: [
+            {
+              path: '',
+              name: 'DashboardDefault',
+              component: () => import('@/views/library/components/PersonalLibraryView.vue'),
+            },
+            {
+              path: 'box/:boxId',
+              name: 'DashboardBox',
+              component: () => import('@/views/library/components/PersonalLibraryView.vue'),
+              props: true, // optional: allow boxId to be passed as prop
+            },
+          ],
         },
         // {
         //   path: 'book',
