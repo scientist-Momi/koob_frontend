@@ -97,16 +97,32 @@ const selectedBoxName = computed(() =>
 <template>
   <div class="bg-white px-5 flex flex-col">
     <div class="flex justify-center m-3.5">
-      <div class="max-w-[1200px] flex items-center justify-between flex-wrap font-light w-full">
-        <div class="border border-[#cfd7e6] rounded-sm flex items-center p-0.5">
-          <span class="material-symbols-outlined a2 ml-1.5 text-gray-500"> search </span>
-          <input
-            v-model="search"
-            type="text"
-            class="w-full text-[13px] py-1 pr-2.5 pl-2 outline-0 bg-white text-sm text-gray-800"
-            placeholder="Filter box items"
-            size="32"
-          />
+      <div class="max-w-[1200px] w-full">
+        <!-- Small info paragraph with icon grouped together -->
+        <div class="flex items-center  gap-3 mb-3 bg-[#eafbf9] border border-[#cfeeea] p-2">
+          <span class="material-symbols-outlined a2 text-[#005b57]">info</span>
+          <p
+            class="text-[#005b57] text-sm  leading-relaxed   flex-1"
+          >
+            You can add books, articles, and papers to your boxes using the search feature in the
+            navigation bar or using the AI agent. Create more boxes if need be.
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between flex-wrap font-light w-full">
+          <div
+            class="border border-[#cfd7e6] rounded-sm flex items-center p-0.5 w-full max-w-[640px]"
+          >
+            <span class="material-symbols-outlined a2 ml-1.5 text-gray-500"> search </span>
+            <input
+              v-model="search"
+              type="text"
+              class="flex-1 text-[13px] py-1 pr-2.5 pl-2 outline-0 bg-white text-sm text-gray-800"
+              aria-label="Filter box items by title or author"
+              placeholder="Filter box items"
+              size="32"
+            />
+          </div>
         </div>
       </div>
     </div>

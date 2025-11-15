@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import KoobLogo from '@/assets/icons/koob_white.svg'
 import GoogleIcon from '@/assets/icons/google.svg'
-import { API_BASE_URL, API_BASE_URL_LOCAL, API_BASE } from '@/config';
+import { API_BASE_URL, API_BASE_URL_LOCAL, API_BASE } from '@/config'
 
 const loading = ref(false)
 const error = ref('')
@@ -25,6 +25,10 @@ const loginWithGoogle = () => {
   >
     <div class="flex flex-col flex-1 items-center justify-center w-full">
       <KoobLogo class="w-22 h-25 mb-18" />
+       <p class="text-white text-sm mb-6 text-center max-w-[420px]">
+          The Koob app helps researchers and students organize books, articles, and academic papers in one place,
+          turning scattered browser tabs into a structured research workspace.
+        </p>
       <div class="bg-white rounded-lg max-w-[500px] w-full mx-auto p-8 flex flex-col items-center">
         <h1 class="text-[#009799] text-[24px] font-extralight mb-4 text-center">
           Log in to your account

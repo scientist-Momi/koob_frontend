@@ -5,6 +5,7 @@ import LoadingModal from '@/components/LoadingModal.vue'
 import EventNotifyBar from '@/components/EventNotifyBar.vue'
 import AgentModal from '@/components/AgentModal.vue'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal.vue'
+import EditNoteModal from '@/components/EditNoteModal.vue'
 import { onMounted, watch } from 'vue'
 </script>
 
@@ -20,5 +21,6 @@ import { onMounted, watch } from 'vue'
     <LoadingModal />
     <AgentModal />
     <ConfirmDeleteModal />
+    <EditNoteModal />
   </div>
 </template>
